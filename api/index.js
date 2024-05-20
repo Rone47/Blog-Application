@@ -16,6 +16,7 @@ mongoose.connect(
 })
 
 const app = express();
+
 app.use(express.json());
 
 app.use('/api/user', userRoutes);
@@ -25,3 +26,13 @@ app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
 
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Something went wrong';
+    res.status(statusCode).json({
+        success: false,
+        statusCode,
+        message,
+    })
+})
