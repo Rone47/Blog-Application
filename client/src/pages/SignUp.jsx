@@ -37,7 +37,7 @@ export default function SignUp() {
                value="Your Email"
             />
             <TextInput
-              type='text'
+              type='email'
               placeholder='name@company.com'
               id="email"
             />
@@ -47,7 +47,7 @@ export default function SignUp() {
                value="Your Password"
             />
             <TextInput
-              type='text'
+              type='password'
               placeholder='Password'
               id="password"
             />
