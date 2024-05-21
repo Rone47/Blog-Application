@@ -4,7 +4,7 @@ import {
   BsInstagram,
   BsTwitter,
   BsGithub,
-  BsDribbble
+  BsDribbble,
 } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
