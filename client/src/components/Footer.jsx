@@ -2,9 +2,9 @@ import { Footer } from "flowbite-react";
 import {
   BsFacebook,
   BsInstagram,
-  BsTwitter,
   BsGithub,
   BsDribbble,
+  BsTwitterX,
 } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
@@ -26,7 +26,7 @@ export default function FooterComp() {
           </div>
           <div className="grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6">
             <div>
-              <Footer.Title tittle="About" />
+              <Footer.Title title="About" />
               <Footer.LinkGroup col>
                 <Footer.Link
                   href="https://github.com/Rone47/worldblog"
@@ -45,7 +45,7 @@ export default function FooterComp() {
               </Footer.LinkGroup>
             </div>
             <div>
-              <Footer.Title tittle="Follow Us" />
+              <Footer.Title title="Follow Us" />
               <Footer.LinkGroup col>
                 <Footer.Link
                   href="https://github.com/Rone47"
@@ -60,7 +60,7 @@ export default function FooterComp() {
               </Footer.LinkGroup>
             </div>
             <div>
-              <Footer.Title tittle="Legal Information" />
+              <Footer.Title title="Legal Information" />
               <Footer.LinkGroup col>
                 <Footer.Link href="#">Privacy Policy</Footer.Link>
                 <Footer.Link href="#">Terms of Service</Footer.Link>
@@ -78,7 +78,7 @@ export default function FooterComp() {
           <div className="flex gap-6 sm:mt-0 mt-4 sm:justify-center">
             <Footer.Icon href="#" icon={BsFacebook} />
             <Footer.Icon href="#" icon={BsInstagram} />
-            <Footer.Icon href="#" icon={BsTwitter} />
+            <Footer.Icon href="#" icon={BsTwitterX} />
             <Footer.Icon href="https://github.com/Rone47" icon={BsGithub} />
             <Footer.Icon href="#" icon={BsDribbble} />
           </div>
