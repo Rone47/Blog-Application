@@ -44,20 +44,24 @@ export default function DashProfile() {
   }, [imageFile]);
 
   const uploadImage = async () => {
-    setImageFileUploadProgress(true);
+    setImageFileUploading(true);
     setImageFileUploadError(null);
-    const storage = getStorage (app);
+    const storage = getStorage(app);
     const fileName = new Date().getTime() + imageFile.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        setImageFileUploadError('Could not upload image (File must be less than 5MB)');
+        setImageFileUploadError(
+          'Could not upload image (File must be less than 2MB)'
+        );
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileUrl(null);
@@ -66,11 +70,11 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
-          setFormData({...formData, profilePicture: downloadURL });
+          setFormData({ ...formData, profilePicture: downloadURL });
           setImageFileUploading(false);
-        })
+        });
       }
-    )
+    );
   };
 
   const handleChange = (e) => {
