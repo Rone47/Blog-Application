@@ -1,6 +1,6 @@
 import { Alert, Button, TextInput } from "flowbite-react";
 import { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -14,11 +14,14 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from '../redux/user/userSlice';
-import { useDispatch } from "react-redux";
+import Swal from 'sweetalert2';
 
 export default function DashProfile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -37,8 +40,9 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
   useEffect(() => {
-    if(imageFile) {
+    if (imageFile) {
       uploadImage();
     }
   }, [imageFile]);
@@ -53,15 +57,11 @@ export default function DashProfile() {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        setImageFileUploadError(
-          'Could not upload image (File must be less than 2MB)'
-        );
+        setImageFileUploadError('Could not upload image (File must be less than 2MB)');
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileUrl(null);
@@ -78,9 +78,8 @@ export default function DashProfile() {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.id]: e.target.value});
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,15 +116,45 @@ export default function DashProfile() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          dispatch(deleteUserStart());
+          const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+            method: 'DELETE',
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            dispatch(deleteUserFailure(data.message));
+          } else {
+            dispatch(deleteUserSuccess(data));
+            Swal.fire("Deleted!", "Your profile has been deleted.", "success");
+          }
+        } catch (error) {
+          dispatch(deleteUserFailure(error.message));
+        }
+      }
+    });
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full font-medium">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
       <form className="flex flex-col gap-4 font-medium" onSubmit={handleSubmit}>
-        <input type="file" accept='image/*' onChange={handleImageChange} ref={filePickerRef} hidden/>
+        <input type="file" accept='image/*' onChange={handleImageChange} ref={filePickerRef} hidden />
         <div className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={() => filePickerRef.current.click()}>
           {imageFileUploadProgress && (
-            <CircularProgressbar 
-              value={imageFileUploadProgress || 0} 
+            <CircularProgressbar
+              value={imageFileUploadProgress || 0}
               text={`${imageFileUploadProgress}%`}
               strokeWidth={5}
               styles={{
@@ -145,19 +174,15 @@ export default function DashProfile() {
           <img
             src={imageFileUrl || currentUser.profilePicture}
             alt="user"
-            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
-              imageFileUploadProgress &&
-              imageFileUploadProgress < 100 &&
-              'opacity-60'
-            }`}
+            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'}`}
           />
         </div>
-        {imageFileUploadError && 
+        {imageFileUploadError &&
           <Alert color='failure'>
             {imageFileUploadError}
           </Alert>
         }
-        
+
         <TextInput
           type="text"
           id="username"
@@ -170,13 +195,13 @@ export default function DashProfile() {
           placeholder="email"
           defaultValue={currentUser.email} onChange={handleChange}
         />
-        <TextInput type="password" id="password" placeholder="password"  onChange={handleChange}/>
+        <TextInput type="password" id="password" placeholder="password" onChange={handleChange} />
         <Button type="submit" gradientDuoTone="purpleToBlue" outline>
           Update
         </Button>
       </form>
       <div className="text-red-600 flex justify-between mt-5 font-semibold">
-        <span className="cursor-pointer">Delete Account</span>
+        <span onClick={handleDeleteUser} className="cursor-pointer">Delete Account</span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
       {updateUserSuccess && (
@@ -184,9 +209,14 @@ export default function DashProfile() {
           {updateUserSuccess}
         </Alert>
       )}
-       {updateUserError && (
+      {updateUserError && (
         <Alert color='failure' className='mt-5'>
           {updateUserError}
+        </Alert>
+      )}
+      {error && (
+        <Alert color='failure' className='mt-5'>
+          {error}
         </Alert>
       )}
     </div>
