@@ -17,6 +17,7 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
 
   const handleImageChange = (e) => {
@@ -53,15 +54,32 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
+          setFormData({...formData, profilePicture: downloadURL });
         })
       }
     )
+  };
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id]: e.target.value});
+  };
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (object.keys(formData).lenth === 0) {
+      return 
+    try {
+      
+    } catch (error) {
+      
+    }
   }
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4 font-medium">
+      <form className="flex flex-col gap-4 font-medium" onSubmit={handleSubmit}>
         <input type="file" accept='image/*' onChange={handleImageChange} ref={filePickerRef} hidden/>
         <div className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={() => filePickerRef.current.click()}>
           {imageFileUploadProgress && (
@@ -103,15 +121,15 @@ export default function DashProfile() {
           type="text"
           id="username"
           placeholder="username"
-          defaultValue={currentUser.username}
+          defaultValue={currentUser.username} onChange={handleChange}
         />
         <TextInput
           type="email"
           id="email"
           placeholder="email"
-          defaultValue={currentUser.email}
+          defaultValue={currentUser.email} onChange={handleChange}
         />
-        <TextInput type="password" id="password" placeholder="password" />
+        <TextInput type="password" id="password" placeholder="password"  onChange={handleChange}/>
         <Button type="submit" gradientDuoTone="purpleToBlue" outline>
           Update
         </Button>
