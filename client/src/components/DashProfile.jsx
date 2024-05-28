@@ -20,9 +20,10 @@ import {
   signoutSuccess,
 } from '../redux/user/userSlice';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 export default function DashProfile() {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -62,7 +63,7 @@ export default function DashProfile() {
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        setImageFileUploadError('Could not upload image (File must be less than 2MB)');
+        setImageFileUploadError('Could not upload image (File must be less than 5MB)');
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileUrl(null);
@@ -213,9 +214,22 @@ export default function DashProfile() {
           defaultValue={currentUser.email} onChange={handleChange}
         />
         <TextInput type="password" id="password" placeholder="password" onChange={handleChange} />
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-          Update
+        <Button type="submit" gradientDuoTone="purpleToBlue" outline disabled={loading || imageFileUploading}>
+          {loading ? 'Loading...' : 'Update'}
         </Button>
+        {
+          currentUser.isAdmin && (
+            <Link to={'/create-post'}>
+            <Button 
+              type="button"
+              gradientDuoTone="greenToBlue"
+              className="w-full"
+            >
+              Create a post
+            </Button></Link>
+            
+          )
+        }
       </form>
       <div className="text-red-600 flex justify-between mt-5 font-semibold">
         <span onClick={handleDeleteUser} className="cursor-pointer">Delete Account</span>
