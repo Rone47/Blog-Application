@@ -82,7 +82,7 @@ export default function DashPosts() {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "No, cancel!",
-      confirmButtonColor: "#3085d6", // Blue color for confirm button
+      confirmButtonColor: "#028A0F", // Blue color for confirm button
       cancelButtonColor: "#d33", // Red color for cancel button
       reverseButtons: true
     }).then((result) => {
