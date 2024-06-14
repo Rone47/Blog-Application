@@ -121,6 +121,8 @@ export default function CommentSection({ postId }) {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "No, cancel!",
+      confirmButtonColor: "#028A0F",
+      cancelButtonColor: "#d33",
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
